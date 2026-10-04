@@ -63,7 +63,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         //3、返回实体对象
         return employee;
     }
-
+    /**
+     * 新增员工
+     *
+     * @param employeeDTO
+     */
     @Override
     public void save(EmployeeDTO employeeDTO) {
         //1、将DTO转换为Entity
@@ -84,7 +88,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         //数据库操作
         employeeMapper.insert(employee);
     }
-
+    /**
+     * 员工分页查询
+     *
+     * @param employeePageQueryDTO
+     * @return
+     */
     @Override
     public PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
         PageHelper.startPage(employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
@@ -93,6 +102,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Employee> list = page.getResult();
         return new PageResult(total, list);
     }
+    /**
+     * 员工账号停用/启用
+     *
+     * @param status
+     * @param id
+     */
 
     @Override
     public void stopOrstart(Integer status, Long id) {
@@ -102,6 +117,31 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .updateTime(LocalDateTime.now())
                 .updateUser(BaseContext.getCurrentId())
                 .build();
+        employeeMapper.update(employee);
+    }
+    /**
+     * 根据id查询员工
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public Employee getById(Long id) {
+        Employee employee= employeeMapper.selectById(id);
+        employee.setPassword("*****");
+        return employee;
+    }
+    /**
+     * 根据id修改员工
+     *
+     * @param employeeDTO
+     */
+    @Override
+    public void update(EmployeeDTO employeeDTO) {
+        Employee employee = new Employee();
+        BeanUtils.copyProperties(employeeDTO, employee);
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(BaseContext.getCurrentId());
         employeeMapper.update(employee);
     }
 
